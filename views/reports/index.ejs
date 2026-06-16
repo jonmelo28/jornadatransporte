@@ -1,0 +1,70 @@
+<div class="page-header">
+  <div class="page-title-section">
+    <h1 class="display-font">Relatórios de Folha de Ponto</h1>
+    <span class="page-subtitle">Gere relatórios detalhados na tela ou exporte em PDF de forma individual ou coletiva.</span>
+  </div>
+</div>
+
+<div class="row g-4 justify-content-center">
+  <!-- Consulta Individual -->
+  <div class="col-md-6 col-lg-5">
+    <div class="card-premium h-100">
+      <div class="card-premium-header">
+        <h5 class="m-0 display-font"><i class="fa-solid fa-user-check me-2 text-primary"></i>Consulta Individual</h5>
+      </div>
+      <div class="card-premium-body">
+        <form action="/relatorios/ver" method="GET">
+          <div class="form-group-premium">
+            <label for="funcionario_id" class="form-label-premium">Funcionário</label>
+            <select name="funcionario_id" id="funcionario_id" class="form-control-premium" required>
+              <option value="" disabled selected>Escolha o funcionário...</option>
+              <% employees.forEach(emp => { %>
+                <option value="<%= emp.id %>"><%= emp.nome %> (<%= emp.cargo === 'motorista' ? 'Motorista' : 'Ajudante' %>)</option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group-premium">
+            <label for="mes" class="form-label-premium">Mês de Competência</label>
+            <input type="month" name="mes" id="mes" class="form-control-premium" value="<%= selectedMonth %>" required>
+          </div>
+
+          <div class="d-flex flex-column gap-2 mt-4">
+            <button type="submit" class="btn-grad justify-content-center py-2.5">
+              <i class="fa-solid fa-magnifying-glass"></i> Visualizar na Tela
+            </button>
+            <button type="submit" class="btn btn-outline-secondary py-2.5 fw-semibold d-flex align-items-center justify-content-center gap-2" onclick="this.form.action='/relatorios/pdf';">
+              <i class="fa-regular fa-file-pdf fs-5 text-danger"></i> Baixar Relatório PDF
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fechamento Coletivo de Motoristas -->
+  <div class="col-md-6 col-lg-5">
+    <div class="card-premium h-100">
+      <div class="card-premium-header">
+        <h5 class="m-0 display-font"><i class="fa-solid fa-paste me-2 text-indigo"></i>Fechamento de Motoristas</h5>
+      </div>
+      <div class="card-premium-body d-flex flex-column justify-content-between">
+        <div>
+          <p class="text-muted" style="font-size: 0.875rem;">
+            Esta opção gera um único documento PDF compilado contendo a folha de ponto mensal de **todos os motoristas** cadastrados no sistema, ordenada alfabeticamente. Cada motorista ocupará sua própria folha de ponto individual para impressão e assinatura física.
+          </p>
+        </div>
+        <form action="/relatorios/pdf-todos-motoristas" method="GET" class="mt-4">
+          <div class="form-group-premium">
+            <label for="mes_todos" class="form-label-premium">Mês de Competência</label>
+            <input type="month" name="mes" id="mes_todos" class="form-control-premium" value="<%= selectedMonth %>" required>
+          </div>
+
+          <button type="submit" class="btn btn-dark w-100 py-2.5 mt-3 d-flex align-items-center justify-content-center gap-2">
+            <i class="fa-solid fa-file-pdf text-danger"></i> Gerar PDF Consolidado (Motoristas)
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

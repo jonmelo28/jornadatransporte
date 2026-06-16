@@ -1,0 +1,196 @@
+<div class="page-header">
+  <div class="page-title-section">
+    <h1 class="display-font">Folha de Ponto Mensal</h1>
+    <span class="page-subtitle">Visualização completa do espelho de ponto de <strong><%= reportData.employee.nome %></strong> - Competência: <strong><%= selectedMonth %></strong></span>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="/relatorios/pdf?funcionario_id=<%= selectedEmployeeId %>&mes=<%= selectedMonth %>" class="btn btn-danger d-inline-flex align-items-center gap-2 rounded-2 fw-semibold">
+      <i class="fa-regular fa-file-pdf"></i> Exportar PDF
+    </a>
+    <a href="/relatorios" class="btn btn-outline-secondary d-inline-flex align-items-center gap-2 rounded-2">
+      <i class="fa-solid fa-arrow-rotate-left"></i> Nova Consulta
+    </a>
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Tabela Detalhada Dia a Dia (Esquerda) -->
+  <div class="col-lg-8">
+    <div class="card-premium">
+      <div class="card-premium-header">
+        <h5 class="m-0 display-font">Registros de Batidas Diárias</h5>
+      </div>
+      <div class="card-premium-body p-0">
+        <div class="table-responsive">
+          <table class="table-premium align-middle" style="font-size: 0.8125rem;">
+            <thead>
+              <tr>
+                <th>Data / Dia da Semana</th>
+                <th>1ª Ent</th>
+                <th>1ª Saí</th>
+                <th>2ª Ent</th>
+                <th>2ª Saí</th>
+                <th class="text-center">Trabalhado</th>
+                <th class="text-center">Extra</th>
+                <th class="text-center">Falta</th>
+                <% if (user.permissoes.includes('jornada_cadastro')) { %>
+                  <th class="text-center" style="width: 50px;">Ação</th>
+                <% } %>
+              </tr>
+            </thead>
+            <tbody>
+              <% reportData.days.forEach(day => { %>
+                <tr class="<%= !day.isWorkingDay ? 'table-warning-bg' : '' %>" style="<%= !day.isWorkingDay ? 'background-color: rgba(241,245,249,0.5);' : '' %>">
+                  <td>
+                    <div class="fw-semibold text-dark"><%= day.dayOfWeekNameFull %></div>
+                  </td>
+                  
+                  <% if (day.details.folga1 && day.details.folga2) { %>
+                    <td colspan="4" class="text-center text-success fw-bold bg-light">FOLGA INTEGRAL</td>
+                  <% } else { %>
+                    <!-- Período 1 -->
+                    <td>
+                      <% if (day.details.folga1) { %>
+                        <span class="text-success fw-bold">FOLGA</span>
+                      <% } else { %>
+                        <%= day.details.e1 || '-' %>
+                      <% } %>
+                    </td>
+                    <td>
+                      <% if (day.details.folga1) { %>
+                        <span class="text-success fw-bold">FOLGA</span>
+                      <% } else { %>
+                        <%= day.details.s1 || '-' %>
+                      <% } %>
+                    </td>
+                    <!-- Período 2 -->
+                    <td>
+                      <% if (day.details.folga2) { %>
+                        <span class="text-success fw-bold">FOLGA</span>
+                      <% } else { %>
+                        <%= day.details.e2 || '-' %>
+                      <% } %>
+                    </td>
+                    <td>
+                      <% if (day.details.folga2) { %>
+                        <span class="text-success fw-bold">FOLGA</span>
+                      <% } else { %>
+                        <%= day.details.s2 || '-' %>
+                      <% } %>
+                    </td>
+                  <% } %>
+
+                  <td class="text-center fw-semibold text-secondary"><%= day.workedStr %></td>
+                  <td class="text-center text-success fw-semibold"><%= day.overtimeStr %></td>
+                  <td class="text-center text-danger"><%= day.missingStr %></td>
+                  
+                  <% if (user.permissoes.includes('jornada_cadastro')) { %>
+                    <td class="text-center">
+                      <a href="/jornada/cadastro?funcionario_id=<%= selectedEmployeeId %>&data=<%= day.date %>" class="btn btn-link btn-sm p-0" title="Editar este dia">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                      </a>
+                    </td>
+                  <% } %>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quadro Resumo Financeiro (Direita) -->
+  <div class="col-lg-4">
+    <!-- Bloco 1: Estatísticas de Horas -->
+    <div class="card-premium mb-4">
+      <div class="card-premium-header bg-dark text-white">
+        <h5 class="m-0 display-font fs-6 text-white"><i class="fa-solid fa-clock me-2"></i>Resumo do Mês</h5>
+      </div>
+      <div class="card-premium-body">
+        <ul class="list-group list-group-flush" style="font-size: 0.875rem;">
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
+            <span>Total de dias</span>
+            <span class="fw-bold"><%= reportData.summary.totalDays %></span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
+            <span>Dias Úteis</span>
+            <span class="fw-bold"><%= reportData.summary.workingDays %></span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
+            <span>Dias não úteis (DSR)</span>
+            <span class="fw-bold"><%= reportData.summary.nonWorkingDays %></span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
+            <span>Horas Trabalhadas</span>
+            <span class="fw-bold text-dark"><%= reportData.summary.totalWorked %></span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
+            <span>Horas Restantes</span>
+            <span class="fw-bold text-muted"><%= reportData.summary.remainingHours %></span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
+            <span>Horas Extras Apuradas (+)</span>
+            <span class="fw-bold text-success"><%= reportData.summary.totalOvertime %></span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
+            <span>Horas Faltantes (-)</span>
+            <span class="fw-bold text-danger"><%= reportData.summary.totalMissing %></span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3 border-top-2">
+            <span class="fw-semibold">Saldo Final</span>
+            <span class="fw-bold fs-5 <%= reportData.summary.totalBalanceMins >= 0 ? 'text-success' : 'text-danger' %>">
+              <%= reportData.summary.totalBalance %>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bloco 2: Financeiro Detalhado -->
+    <div class="card-premium">
+      <div class="card-premium-header bg-secondary text-white">
+        <h5 class="m-0 display-font fs-6 text-white"><i class="fa-solid fa-dollar-sign me-2"></i>Apurador Financeiro</h5>
+      </div>
+      <div class="card-premium-body">
+        <ul class="list-group list-group-flush" style="font-size: 0.875rem;">
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
+            <span>Salário Base</span>
+            <span class="fw-semibold">R$ <%= reportData.summary.salarioBase.toFixed(2) %></span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
+            <span>Valor normal da hora</span>
+            <span class="text-secondary">R$ <%= reportData.summary.valorHora.toFixed(2) %></span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
+            <span>Valor da hora extra (50%)</span>
+            <span class="text-secondary">R$ <%= reportData.summary.valorHoraExtra.toFixed(2) %></span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
+            <span>Total Extras R$</span>
+            <span class="fw-semibold text-success">R$ <%= reportData.summary.horasExtraRS.toFixed(2) %></span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
+            <span>DSR proporcional</span>
+            <span class="text-success">R$ <%= reportData.summary.dsr.toFixed(2) %></span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-bottom">
+            <span class="fw-semibold">Total Devido (Extras+DSR)</span>
+            <span class="fw-bold text-dark">R$ <%= reportData.summary.totalDevido.toFixed(2) %></span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
+            <span>Valor Pago Adiantado</span>
+            <span class="text-muted">R$ <%= reportData.summary.valorPago.toFixed(2) %></span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+            <span class="fw-bold">Diferença a Pagar</span>
+            <span class="fw-bold fs-5 <%= reportData.summary.diferenca >= 0 ? 'text-success' : 'text-danger' %>">
+              R$ <%= reportData.summary.diferenca.toFixed(2) %>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,95 @@
+<div class="page-header">
+  <div class="page-title-section">
+    <h1 class="display-font">Regras de Horário e Jornada</h1>
+    <span class="page-subtitle">Configure as diretrizes de horários padrão da empresa, tolerâncias de batidas e cargas horárias mensais.</span>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-8 col-xl-6">
+    
+    <% if (success) { %>
+      <div class="alert alert-success alert-dismissible fade show d-flex align-items-center py-2 px-3 border-0 rounded-3 mb-4" style="background-color: var(--success-bg); color: var(--success);" role="alert">
+        <i class="fa-solid fa-circle-check me-2"></i>
+        <div style="font-size: 0.875rem;"><%= success %></div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="font-size: 0.75rem; padding: 0.75rem 1rem;"></button>
+      </div>
+    <% } %>
+
+    <% if (error) { %>
+      <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center py-2 px-3 border-0 rounded-3 mb-4" style="background-color: var(--danger-bg); color: var(--danger);" role="alert">
+        <i class="fa-solid fa-circle-exclamation me-2"></i>
+        <div style="font-size: 0.875rem;"><%= error %></div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="font-size: 0.75rem; padding: 0.75rem 1rem;"></button>
+      </div>
+    <% } %>
+
+    <div class="card-premium">
+      <div class="card-premium-header">
+        <h5 class="m-0 display-font">Configurações Gerais</h5>
+      </div>
+      <div class="card-premium-body">
+        <form action="/configuracao" method="POST">
+          
+          <div class="form-group-premium">
+            <label for="empresa_nome" class="form-label-premium">Nome da Empresa</label>
+            <input type="text" name="empresa_nome" id="empresa_nome" class="form-control-premium" value="<%= config.empresa_nome || '' %>" placeholder="Ex: Transportadora Rápida" required>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="form-group-premium">
+                <label for="entrada1_base" class="form-label-premium">1º Horário: Entrada Base</label>
+                <input type="time" name="entrada1_base" id="entrada1_base" class="form-control-premium" value="<%= config.entrada1_base || '08:00' %>" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group-premium">
+                <label for="saida1_base" class="form-label-premium">1º Horário: Saída Base</label>
+                <input type="time" name="saida1_base" id="saida1_base" class="form-control-premium" value="<%= config.saida1_base || '12:00' %>" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="form-group-premium">
+                <label for="entrada2_base" class="form-label-premium">2º Horário: Entrada Base</label>
+                <input type="time" name="entrada2_base" id="entrada2_base" class="form-control-premium" value="<%= config.entrada2_base || '14:00' %>" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group-premium">
+                <label for="saida2_base" class="form-label-premium">2º Horário: Saída Base</label>
+                <input type="time" name="saida2_base" id="saida2_base" class="form-control-premium" value="<%= config.saida2_base || '18:00' %>" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="form-group-premium">
+                <label for="tolerancia_minutos" class="form-label-premium">Tolerância Geral (Minutos)</label>
+                <input type="number" name="tolerancia_minutos" id="tolerancia_minutos" class="form-control-premium" value="<%= config.tolerancia_minutos || 5 %>" min="0" max="60" required>
+                <small class="text-muted mt-1 d-block" style="font-size: 0.75rem;">Ex: Tolerância de 5 min por batida de ponto.</small>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group-premium">
+                <label for="carga_mensal_horas" class="form-label-premium">Carga Horária Mensal (Horas)</label>
+                <input type="number" name="carga_mensal_horas" id="carga_mensal_horas" class="form-control-premium" value="<%= config.carga_mensal_horas || 220 %>" min="1" max="500" required>
+                <small class="text-muted mt-1 d-block" style="font-size: 0.75rem;">Ex: 220h ou 200h conforme a empresa.</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2 mt-4 border-top pt-3">
+            <button type="submit" class="btn-grad py-2 px-4">
+              <i class="fa-solid fa-floppy-disk"></i> Salvar Configurações
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

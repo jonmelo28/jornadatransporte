@@ -1,0 +1,62 @@
+<div class="page-header">
+  <div class="page-title-section">
+    <h1 class="display-font"><%= title %></h1>
+    <span class="page-subtitle">Preencha os dados abaixo do funcionário para salvar no banco de dados.</span>
+  </div>
+  <div>
+    <a href="/funcionarios" class="btn btn-outline-secondary d-inline-flex align-items-center gap-2 rounded-2">
+      <i class="fa-solid fa-arrow-left"></i> Voltar à Lista
+    </a>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-8 col-xl-6">
+    <div class="card-premium">
+      <div class="card-premium-header">
+        <h5 class="m-0 display-font">Dados Cadastrais</h5>
+      </div>
+      <div class="card-premium-body">
+        <% if (error) { %>
+          <div class="alert alert-danger d-flex align-items-center py-2 px-3 border-0 rounded-3 mb-4" style="background-color: rgba(239,68,68,0.1); color: #dc2626;" role="alert">
+            <i class="fa-solid fa-circle-exclamation me-2"></i>
+            <div style="font-size: 0.875rem;"><%= error %></div>
+          </div>
+        <% } %>
+
+        <form action="<%= action %>" method="POST">
+          <div class="form-group-premium">
+            <label for="nome" class="form-label-premium">Nome Completo</label>
+            <input type="text" name="nome" id="nome" class="form-control-premium" value="<%= employee.nome || '' %>" placeholder="Ex: João da Silva" required>
+          </div>
+
+          <div class="form-group-premium">
+            <label for="email" class="form-label-premium">Endereço de E-mail</label>
+            <input type="email" name="email" id="email" class="form-control-premium" value="<%= employee.email || '' %>" placeholder="Ex: joao@transportadora.com" required>
+          </div>
+
+          <div class="form-group-premium">
+            <label for="cargo" class="form-label-premium">Cargo / Função</label>
+            <select name="cargo" id="cargo" class="form-control-premium" required>
+              <option value="" disabled <%= !employee.cargo ? 'selected' : '' %>>Selecione um cargo...</option>
+              <option value="motorista" <%= employee.cargo === 'motorista' ? 'selected' : '' %>>Motorista</option>
+              <option value="ajudante" <%= employee.cargo === 'ajudante' ? 'selected' : '' %>>Ajudante</option>
+            </select>
+          </div>
+
+          <div class="form-group-premium">
+            <label for="salario" class="form-label-premium">Salário Mensal Base (R$)</label>
+            <input type="number" name="salario" id="salario" class="form-control-premium" value="<%= employee.salario || '' %>" placeholder="Ex: 2500.00" step="0.01" min="0" required>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2 mt-4">
+            <a href="/funcionarios" class="btn btn-light rounded-2 py-2 px-3 fw-semibold">Cancelar</a>
+            <button type="submit" class="btn-grad py-2 px-4">
+              <i class="fa-solid fa-save"></i> Salvar Funcionário
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

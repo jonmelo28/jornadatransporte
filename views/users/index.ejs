@@ -1,0 +1,85 @@
+<div class="page-header">
+  <div class="page-title-section">
+    <h1 class="display-font">Usuários do Sistema</h1>
+    <span class="page-subtitle">Gerenciamento de contas de acesso ao painel administrativo e suas respectivas permissões.</span>
+  </div>
+  <div>
+    <a href="/usuarios/criar" class="btn-grad">
+      <i class="fa-solid fa-user-plus"></i> Novo Usuário
+    </a>
+  </div>
+</div>
+
+<div class="card-premium">
+  <div class="card-premium-header">
+    <h5 class="m-0 display-font">Lista de Usuários</h5>
+  </div>
+  <div class="card-premium-body p-0">
+    <div class="table-responsive">
+      <table class="table-premium">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>E-mail</th>
+            <th>Funcionário Vinculado</th>
+            <th>Telas Permitidas (Acesso)</th>
+            <th class="text-end" style="width: 150px;">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% users.forEach(u => { %>
+            <tr>
+              <td>
+                <div class="fw-semibold text-dark"><%= u.nome %></div>
+              </td>
+              <td><%= u.email %></td>
+              <td>
+                <% if (u.funcionario_nome) { %>
+                  <span class="text-secondary fw-semibold">
+                    <i class="fa-solid fa-link me-1"></i><%= u.funcionario_nome %>
+                  </span>
+                <% } else { %>
+                  <span class="text-muted">Apenas Administrador (Sem vínculo)</span>
+                <% } %>
+              </td>
+              <td>
+                <div class="d-flex flex-wrap gap-1">
+                  <% if (u.permissoes_arr.includes('dashboard')) { %><span class="badge bg-dark">Painel</span><% } %>
+                  <% if (u.permissoes_arr.includes('funcionarios')) { %><span class="badge bg-primary">Funcionários</span><% } %>
+                  <% if (u.permissoes_arr.includes('usuarios')) { %><span class="badge bg-success">Usuários</span><% } %>
+                  <% if (u.permissoes_arr.includes('jornada_cadastro')) { %><span class="badge bg-warning text-dark">Registro Ponto</span><% } %>
+                  <% if (u.permissoes_arr.includes('dias_uteis')) { %><span class="badge bg-info text-dark">Dias Úteis</span><% } %>
+                  <% if (u.permissoes_arr.includes('financeiro')) { %><span class="badge bg-danger">Financeiro</span><% } %>
+                  <% if (u.permissoes_arr.includes('relatorios')) { %><span class="badge bg-secondary">Relatórios</span><% } %>
+                  <% if (u.permissoes_arr.includes('configuracao')) { %><span class="badge bg-indigo-500" style="background-color: #6366f1;">Regras Horário</span><% } %>
+                  <% if (u.permissoes_arr.length === 0) { %>
+                    <span class="text-muted" style="font-size: 0.75rem;">Sem permissões</span>
+                  <% } %>
+                </div>
+              </td>
+              <td class="text-end">
+                <div class="d-inline-flex gap-2">
+                  <a href="/usuarios/editar/<%= u.id %>" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1 rounded-2" title="Editar">
+                    <i class="fa-solid fa-pencil"></i>
+                  </a>
+                  
+                  <% if (u.id !== user.id) { %>
+                    <form action="/usuarios/excluir/<%= u.id %>" method="POST" onsubmit="return confirm('Deseja realmente excluir este usuário? ele perderá o acesso ao sistema.');">
+                      <button type="submit" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1 rounded-2" title="Excluir">
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
+                    </form>
+                  <% } else { %>
+                    <button class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1 rounded-2" disabled title="Seu próprio usuário">
+                      <i class="fa-solid fa-lock"></i>
+                    </button>
+                  <% } %>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

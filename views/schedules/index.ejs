@@ -1,0 +1,118 @@
+<div class="page-header">
+  <div class="page-title-section">
+    <h1 class="display-font">Horários Padrão (Turnos)</h1>
+    <span class="page-subtitle">Cadastre os turnos de trabalho da empresa e vincule cada funcionário ao seu turno correto.</span>
+  </div>
+  <div>
+    <a href="/horarios-padrao/criar" class="btn-grad">
+      <i class="fa-solid fa-clock-nine me-1"></i> Novo Turno
+    </a>
+  </div>
+</div>
+
+<% if (typeof error !== 'undefined' && error) { %>
+  <div class="alert alert-danger d-flex align-items-center py-2 px-3 border-0 rounded-3 mb-4"
+       style="background-color: var(--danger-bg); color: var(--danger);" role="alert">
+    <i class="fa-solid fa-circle-exclamation me-2"></i>
+    <div style="font-size: 0.875rem;"><%= error %></div>
+  </div>
+<% } %>
+
+<div class="row g-4">
+  <!-- Lista de Horários -->
+  <div class="col-12">
+    <div class="card-premium">
+      <div class="card-premium-header">
+        <h5 class="m-0 display-font">Turnos Cadastrados</h5>
+        <span class="badge bg-secondary rounded-pill"><%= schedules.length %> turno(s)</span>
+      </div>
+      <div class="card-premium-body p-0">
+        <% if (schedules.length === 0) { %>
+          <div class="p-5 text-center text-muted">
+            <i class="fa-regular fa-clock fs-1 mb-3"></i>
+            <p class="m-0 fw-semibold">Nenhum turno cadastrado ainda.</p>
+            <p class="text-muted mt-1" style="font-size: 0.875rem;">
+              Crie um turno e depois vincule-o nos cadastros de cada funcionário.<br>
+              Enquanto não houver vínculo, o sistema usará o horário padrão global das <strong>Regras de Horário</strong>.
+            </p>
+          </div>
+        <% } else { %>
+          <div class="table-responsive">
+            <table class="table-premium">
+              <thead>
+                <tr>
+                  <th>Nome do Turno</th>
+                  <th class="text-center">1ª Entrada</th>
+                  <th class="text-center">1ª Saída</th>
+                  <th class="text-center">2ª Entrada</th>
+                  <th class="text-center">2ª Saída</th>
+                  <th class="text-center">Jornada Diária</th>
+                  <th class="text-center">Funcionários</th>
+                  <th class="text-end" style="width: 130px;">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% schedules.forEach(s => {
+                  // Calcular jornada diária em horas
+                  function timeToMins(t) {
+                    if (!t) return 0;
+                    const parts = t.substring(0, 5).split(':');
+                    return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+                  }
+                  const dur1 = timeToMins(s.saida1_base) - timeToMins(s.entrada1_base);
+                  const dur2 = timeToMins(s.saida2_base) - timeToMins(s.entrada2_base);
+                  const totalMins = dur1 + dur2;
+                  const jornada = `${String(Math.floor(totalMins/60)).padStart(2,'0')}:${String(totalMins%60).padStart(2,'0')}h`;
+                %>
+                <tr>
+                  <td>
+                    <div class="fw-semibold text-dark"><%= s.nome %></div>
+                  </td>
+                  <td class="text-center font-monospace"><%= s.entrada1_base ? s.entrada1_base.substring(0, 5) : '-' %></td>
+                  <td class="text-center font-monospace"><%= s.saida1_base ? s.saida1_base.substring(0, 5) : '-' %></td>
+                  <td class="text-center font-monospace"><%= s.entrada2_base ? s.entrada2_base.substring(0, 5) : '-' %></td>
+                  <td class="text-center font-monospace"><%= s.saida2_base ? s.saida2_base.substring(0, 5) : '-' %></td>
+                  <td class="text-center">
+                    <span class="badge-custom badge-active"><%= jornada %></span>
+                  </td>
+                  <td class="text-center">
+                    <span class="badge bg-secondary rounded-pill"><%= s.total_funcionarios %></span>
+                  </td>
+                  <td class="text-end">
+                    <div class="d-inline-flex gap-2">
+                      <a href="/horarios-padrao/editar/<%= s.id %>"
+                         class="btn btn-outline-primary btn-sm rounded-2" title="Editar">
+                        <i class="fa-solid fa-pencil"></i>
+                      </a>
+                      <form action="/horarios-padrao/excluir/<%= s.id %>" method="POST"
+                            onsubmit="return confirm('Excluir este turno? Os funcionários vinculados perderão o vínculo.');">
+                        <button type="submit" class="btn btn-outline-danger btn-sm rounded-2" title="Excluir">
+                          <i class="fa-solid fa-trash"></i>
+                        </button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dica de Uso -->
+  <div class="col-12">
+    <div class="alert alert-info d-flex gap-3 align-items-start rounded-3 border-0"
+         style="background-color: #e0f2fe; color: #0369a1;">
+      <i class="fa-solid fa-circle-info fs-5 mt-1 flex-shrink-0"></i>
+      <div style="font-size: 0.875rem;">
+        <strong>Como funciona?</strong><br>
+        Crie os turnos aqui (ex: "Turno 08h", "Turno 07h") e depois acesse <strong>Funcionários → Editar</strong>
+        para vincular cada funcionário ao seu turno correspondente.<br>
+        Funcionários sem turno vinculado herdam automaticamente o horário configurado em <strong>Regras de Horário</strong>.
+      </div>
+    </div>
+  </div>
+</div>

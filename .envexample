@@ -1,0 +1,7 @@
+PORT=3000
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=senha
+DB_NAME=jornada_db
+JWT_SECRET=jornada_segredo_jwt_super_secreto_1234
+SESSION_SECRET=jornada_sessao_secreta_1234

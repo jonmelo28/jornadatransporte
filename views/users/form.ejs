@@ -1,0 +1,127 @@
+<div class="page-header">
+  <div class="page-title-section">
+    <h1 class="display-font"><%= title %></h1>
+    <span class="page-subtitle">Configure as credenciais e as permissões de acesso às telas do sistema.</span>
+  </div>
+  <div>
+    <a href="/usuarios" class="btn btn-outline-secondary d-inline-flex align-items-center gap-2 rounded-2">
+      <i class="fa-solid fa-arrow-left"></i> Voltar à Lista
+    </a>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card-premium">
+      <div class="card-premium-header">
+        <h5 class="m-0 display-font">Credenciais e Permissões</h5>
+      </div>
+      <div class="card-premium-body">
+        <% if (error) { %>
+          <div class="alert alert-danger d-flex align-items-center py-2 px-3 border-0 rounded-3 mb-4" style="background-color: rgba(239,68,68,0.1); color: #dc2626;" role="alert">
+            <i class="fa-solid fa-circle-exclamation me-2"></i>
+            <div style="font-size: 0.875rem;"><%= error %></div>
+          </div>
+        <% } %>
+
+        <% 
+          let perms = [];
+          try {
+            perms = typeof userData.permissoes === 'string' ? JSON.parse(userData.permissoes) : (userData.permissoes || []);
+          } catch(e) {
+            perms = [];
+          }
+        %>
+
+        <form action="<%= action %>" method="POST">
+          <div class="row">
+            <!-- Credenciais de Acesso -->
+            <div class="col-md-6 border-end">
+              <h6 class="display-font mb-3 text-secondary border-bottom pb-2">Acesso do Usuário</h6>
+              
+              <div class="form-group-premium">
+                <label for="nome" class="form-label-premium">Nome de Exibição</label>
+                <input type="text" name="nome" id="nome" class="form-control-premium" value="<%= userData.nome || '' %>" placeholder="Ex: Admin de Campo" required>
+              </div>
+
+              <div class="form-group-premium">
+                <label for="email" class="form-label-premium">E-mail de Login</label>
+                <input type="email" name="email" id="email" class="form-control-premium" value="<%= userData.email || '' %>" placeholder="Ex: login@sistema.com" required>
+              </div>
+
+              <div class="form-group-premium">
+                <label for="senha" class="form-label-premium">Senha de Acesso</label>
+                <input type="password" name="senha" id="senha" class="form-control-premium" placeholder="<%= userData.id ? 'Deixe em branco para manter a atual' : 'Digite a senha do usuário' %>" <%= userData.id ? '' : 'required' %>>
+              </div>
+
+              <div class="form-group-premium">
+                <label for="funcionario_id" class="form-label-premium">Funcionário Correspondente (Vínculo Opcional)</label>
+                <select name="funcionario_id" id="funcionario_id" class="form-control-premium">
+                  <option value="">Nenhum (Apenas Administrador)</option>
+                  <% employees.forEach(emp => { %>
+                    <option value="<%= emp.id %>" <%= userData.funcionario_id === emp.id ? 'selected' : '' %>><%= emp.nome %></option>
+                  <% }) %>
+                </select>
+                <small class="text-muted mt-1 d-block" style="font-size: 0.75rem;">
+                  Associa o login a um funcionário. Lançadores de ponto só visualizam/editam suas próprias informações se não tiverem outras permissões.
+                </small>
+              </div>
+            </div>
+
+            <!-- Controle de Telas (Permissões) -->
+            <div class="col-md-6 ps-md-4">
+              <h6 class="display-font mb-3 text-secondary border-bottom pb-2">Telas com Acesso Permitido</h6>
+              
+              <div class="form-check-premium">
+                <input type="checkbox" name="permissoes" value="dashboard" id="p_dash" class="form-check-input-premium" <%= perms.includes('dashboard') ? 'checked' : '' %>>
+                <label for="p_dash" class="form-label-premium mb-0 cursor-pointer">Painel Geral (Dashboard de Saldos)</label>
+              </div>
+
+              <div class="form-check-premium">
+                <input type="checkbox" name="permissoes" value="funcionarios" id="p_func" class="form-check-input-premium" <%= perms.includes('funcionarios') ? 'checked' : '' %>>
+                <label for="p_func" class="form-label-premium mb-0 cursor-pointer">Funcionários (Visualizar/Editar)</label>
+              </div>
+
+              <div class="form-check-premium">
+                <input type="checkbox" name="permissoes" value="usuarios" id="p_user" class="form-check-input-premium" <%= perms.includes('usuarios') ? 'checked' : '' %>>
+                <label for="p_user" class="form-label-premium mb-0 cursor-pointer">Usuários e Permissões (Visualizar/Editar)</label>
+              </div>
+
+              <div class="form-check-premium">
+                <input type="checkbox" name="permissoes" value="jornada_cadastro" id="p_jorn" class="form-check-input-premium" <%= perms.includes('jornada_cadastro') ? 'checked' : '' %>>
+                <label for="p_jorn" class="form-label-premium mb-0 cursor-pointer">Registrar Ponto (Lançamentos Diários)</label>
+              </div>
+
+              <div class="form-check-premium">
+                <input type="checkbox" name="permissoes" value="dias_uteis" id="p_dias" class="form-check-input-premium" <%= perms.includes('dias_uteis') ? 'checked' : '' %>>
+                <label for="p_dias" class="form-label-premium mb-0 cursor-pointer">Dias Úteis (Feriados e Exceções)</label>
+              </div>
+
+              <div class="form-check-premium">
+                <input type="checkbox" name="permissoes" value="financeiro" id="p_fin" class="form-check-input-premium" <%= perms.includes('financeiro') ? 'checked' : '' %>>
+                <label for="p_fin" class="form-label-premium mb-0 cursor-pointer">Financeiro / Pagamento de Extras</label>
+              </div>
+
+              <div class="form-check-premium">
+                <input type="checkbox" name="permissoes" value="relatorios" id="p_rel" class="form-check-input-premium" <%= perms.includes('relatorios') ? 'checked' : '' %>>
+                <label for="p_rel" class="form-label-premium mb-0 cursor-pointer">Folhas de Ponto (Relatórios e PDFs)</label>
+              </div>
+
+              <div class="form-check-premium">
+                <input type="checkbox" name="permissoes" value="configuracao" id="p_conf" class="form-check-input-premium" <%= perms.includes('configuracao') ? 'checked' : '' %>>
+                <label for="p_conf" class="form-label-premium mb-0 cursor-pointer">Regras de Horário (Horários base)</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2 mt-4 border-top pt-3">
+            <a href="/usuarios" class="btn btn-light rounded-2 py-2 px-3 fw-semibold">Cancelar</a>
+            <button type="submit" class="btn-grad py-2 px-4">
+              <i class="fa-solid fa-save"></i> Salvar Usuário
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,68 @@
+<div class="page-header">
+  <div class="page-title-section">
+    <h1 class="display-font">Funcionários</h1>
+    <span class="page-subtitle">Gerenciamento dos motoristas e ajudantes cadastrados no sistema.</span>
+  </div>
+  <div>
+    <a href="/funcionarios/criar" class="btn-grad">
+      <i class="fa-solid fa-plus"></i> Novo Funcionário
+    </a>
+  </div>
+</div>
+
+<div class="card-premium">
+  <div class="card-premium-header">
+    <h5 class="m-0 display-font">Lista de Funcionários</h5>
+  </div>
+  <div class="card-premium-body p-0">
+    <% if (employees.length === 0) { %>
+      <div class="p-5 text-center text-muted">
+        <i class="fa-solid fa-users-slash fs-1 mb-3"></i>
+        <p class="m-0">Nenhum funcionário cadastrado. Clique em "Novo Funcionário" para adicionar.</p>
+      </div>
+    <% } else { %>
+      <div class="table-responsive">
+        <table class="table-premium">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>E-mail</th>
+              <th>Cargo</th>
+              <th>Salário Base</th>
+              <th class="text-end" style="width: 150px;">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% employees.forEach(emp => { %>
+              <tr>
+                <td>
+                  <div class="fw-semibold text-dark"><%= emp.nome %></div>
+                </td>
+                <td><%= emp.email %></td>
+                <td>
+                  <span class="badge-custom <%= emp.cargo === 'motorista' ? 'badge-driver' : 'badge-helper' %>">
+                    <%= emp.cargo === 'motorista' ? 'Motorista' : 'Ajudante' %>
+                  </span>
+                </td>
+                <td class="fw-semibold">R$ <%= parseFloat(emp.salario).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></td>
+                <td class="text-end">
+                  <div class="d-inline-flex gap-2">
+                    <a href="/funcionarios/editar/<%= emp.id %>" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1 rounded-2" title="Editar">
+                      <i class="fa-solid fa-pencil"></i>
+                    </a>
+                    
+                    <form action="/funcionarios/excluir/<%= emp.id %>" method="POST" onsubmit="return confirm('Deseja realmente excluir este funcionário? Todos os dados de jornadas e pagamentos associados serão excluídos.');">
+                      <button type="submit" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1 rounded-2" title="Excluir">
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </div>
+</div>

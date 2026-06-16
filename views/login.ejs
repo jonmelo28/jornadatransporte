@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acessar Sistema | Controle de Jornada</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- CSS Customizado -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="login-wrapper">
+
+  <div class="login-card">
+    <div class="login-title">
+      <div class="login-logo">
+        <i class="fa-solid fa-truck-ramp-box me-2"></i>JornadaTrans
+      </div>
+      <div class="login-tagline">Controle de Jornada e Custos Extras</div>
+    </div>
+
+    <% if (error) { %>
+      <div class="alert alert-danger d-flex align-items-center py-2 px-3 border-0 rounded-3 mb-4" style="background-color: rgba(239,68,68,0.15); color: #f87171;" role="alert">
+        <i class="fa-solid fa-triangle-exclamation me-2 fs-6"></i>
+        <div style="font-size: 0.8125rem;"><%= error %></div>
+      </div>
+    <% } %>
+
+    <form action="/login" method="POST">
+      <div class="form-group-premium">
+        <label for="email" class="form-label-premium">Endereço de E-mail</label>
+        <div class="position-relative">
+          <input type="email" name="email" id="email" class="form-control-premium" placeholder="exemplo@email.com" required autocomplete="username">
+        </div>
+      </div>
+
+      <div class="form-group-premium">
+        <label for="senha" class="form-label-premium">Senha de Acesso</label>
+        <div class="position-relative">
+          <input type="password" name="senha" id="senha" class="form-control-premium" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+      </div>
+
+      <button type="submit" class="login-btn">
+        <i class="fa-solid fa-right-to-bracket me-2"></i>Entrar no Painel
+      </button>
+    </form>
+  </div>
+
+  <!-- Bootstrap 5 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

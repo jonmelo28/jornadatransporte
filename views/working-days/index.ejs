@@ -1,0 +1,109 @@
+<div class="page-header">
+  <div class="page-title-section">
+    <h1 class="display-font">Calendário de Dias Úteis</h1>
+    <span class="page-subtitle">Cadastre feriados, pontes ou exceções de trabalho para controle correto do DSR e saldos.</span>
+  </div>
+</div>
+
+<% if (error) { %>
+  <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center py-2 px-3 border-0 rounded-3 mb-4" style="background-color: var(--danger-bg); color: var(--danger);" role="alert">
+    <i class="fa-solid fa-circle-exclamation me-2"></i>
+    <div style="font-size: 0.875rem;"><%= error %></div>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="font-size: 0.75rem; padding: 0.75rem 1rem;"></button>
+  </div>
+<% } %>
+
+<div class="row g-4">
+  <!-- Formulário de Cadastro (Esquerda) -->
+  <div class="col-lg-4">
+    <div class="card-premium">
+      <div class="card-premium-header">
+        <h5 class="m-0 display-font">Adicionar Exceção</h5>
+      </div>
+      <div class="card-premium-body">
+        <form action="/dias-uteis/criar" method="POST">
+          <div class="form-group-premium">
+            <label for="data" class="form-label-premium">Data da Exceção</label>
+            <input type="date" name="data" id="data" class="form-control-premium" required>
+          </div>
+
+          <div class="form-group-premium">
+            <label for="status" class="form-label-premium">Status do Dia</label>
+            <select name="status" id="status" class="form-control-premium" required>
+              <option value="nao_util" selected>Não Útil / Feriado / DSR</option>
+              <option value="util">Dia Útil Extra (Trabalho)</option>
+            </select>
+            <small class="text-muted mt-1 d-block" style="font-size: 0.73rem;">
+              * <strong>Não Útil</strong>: zera a obrigação de trabalho e adiciona ao multiplicador de DSR.
+              <br>* <strong>Útil</strong>: exige batidas e conta como dia de trabalho normal.
+            </small>
+          </div>
+
+          <div class="form-group-premium">
+            <label for="descricao" class="form-label-premium">Descrição / Motivo</label>
+            <input type="text" name="descricao" id="descricao" class="form-control-premium" placeholder="Ex: Feriado de Tiradentes" required>
+          </div>
+
+          <button type="submit" class="btn-grad w-100 py-2.5 mt-3 justify-content-center">
+            <i class="fa-solid fa-calendar-plus"></i> Registrar Dia
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabela de Exceções Cadastradas (Direita) -->
+  <div class="col-lg-8">
+    <div class="card-premium">
+      <div class="card-premium-header">
+        <h5 class="m-0 display-font">Exceções de Calendário Registradas</h5>
+      </div>
+      <div class="card-premium-body p-0">
+        <% if (exceptions.length === 0) { %>
+          <div class="p-5 text-center text-muted">
+            <i class="fa-regular fa-calendar-xmark fs-1 mb-3"></i>
+            <p class="m-0">Nenhuma data personalizada registrada.</p>
+            <small class="text-muted">Por padrão, domingos são considerados DSR (não úteis) e segunda a sábado são considerados dias úteis.</small>
+          </div>
+        <% } else { %>
+          <div class="table-responsive">
+            <table class="table-premium">
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Status</th>
+                  <th>Descrição / Feriado</th>
+                  <th class="text-end" style="width: 100px;">Ação</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% exceptions.forEach(exc => { %>
+                  <% 
+                    // Formatar data para exibição pt-BR
+                    const dateFormatted = exc.date_str.split('-').reverse().join('/');
+                  %>
+                  <tr>
+                    <td class="fw-semibold text-dark"><%= dateFormatted %></td>
+                    <td>
+                      <span class="badge-custom <%= exc.status === 'util' ? 'badge-active' : 'badge-danger' %>">
+                        <%= exc.status === 'util' ? 'Útil Extra' : 'Não Útil / Feriado' %>
+                      </span>
+                    </td>
+                    <td><%= exc.descricao || '-' %></td>
+                    <td class="text-end">
+                      <form action="/dias-uteis/excluir/<%= exc.id %>" method="POST" onsubmit="return confirm('Deseja realmente remover esta exceção do calendário?');">
+                        <button type="submit" class="btn btn-outline-danger btn-sm rounded-2" title="Excluir">
+                          <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>

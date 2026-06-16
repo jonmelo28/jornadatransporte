@@ -1,0 +1,175 @@
+<div class="page-header">
+  <div class="page-title-section">
+    <h1 class="display-font">Lançamento de Ponto</h1>
+    <span class="page-subtitle">Lance ou edite batidas de ponto e folgas de funcionários por data.</span>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    
+    <% if (success) { %>
+      <div class="alert alert-success alert-dismissible fade show d-flex align-items-center py-2 px-3 border-0 rounded-3 mb-4" style="background-color: var(--success-bg); color: var(--success);" role="alert">
+        <i class="fa-solid fa-circle-check me-2"></i>
+        <div style="font-size: 0.875rem;"><%= success %></div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="font-size: 0.75rem; padding: 0.75rem 1rem;"></button>
+      </div>
+    <% } %>
+
+    <% if (error) { %>
+      <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center py-2 px-3 border-0 rounded-3 mb-4" style="background-color: var(--danger-bg); color: var(--danger);" role="alert">
+        <i class="fa-solid fa-circle-exclamation me-2"></i>
+        <div style="font-size: 0.875rem;"><%= error %></div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="font-size: 0.75rem; padding: 0.75rem 1rem;"></button>
+      </div>
+    <% } %>
+
+    <!-- Card de Filtro e Busca -->
+    <div class="card-premium mb-4">
+      <div class="card-premium-header">
+        <h5 class="m-0 display-font">Passo 1: Selecionar Funcionário e Data</h5>
+      </div>
+      <div class="card-premium-body">
+        <div class="row g-3">
+          <div class="col-md-7">
+            <label for="search_funcionario_id" class="form-label-premium">Funcionário</label>
+            <select id="search_funcionario_id" class="form-control-premium" onchange="carregarRegistro()">
+              <option value="" disabled <%= !selectedEmployeeId ? 'selected' : '' %>>Escolha o funcionário...</option>
+              <% employees.forEach(emp => { %>
+                <option value="<%= emp.id %>" <%= selectedEmployeeId == emp.id ? 'selected' : '' %>><%= emp.nome %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="col-md-5">
+            <label for="search_data" class="form-label-premium">Data de Trabalho</label>
+            <input type="date" id="search_data" class="form-control-premium" value="<%= selectedDate %>" onchange="carregarRegistro()">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulário de Batidas (Só habilita se tiver funcionário selecionado) -->
+    <% if (selectedEmployeeId) { %>
+      <div class="card-premium">
+        <div class="card-premium-header">
+          <h5 class="m-0 display-font">Passo 2: Horários do Dia</h5>
+          <span class="badge bg-indigo-100 text-indigo-800" style="background-color: #e0e7ff; color: #3730a3;">Edição Ativa</span>
+        </div>
+        <div class="card-premium-body">
+          <form action="/jornada/cadastro" method="POST">
+            <!-- Campos escondidos para envio do formulário -->
+            <input type="hidden" name="funcionario_id" value="<%= selectedEmployeeId %>">
+            <input type="hidden" name="data" value="<%= selectedDate %>">
+
+            <div class="row g-4">
+              <!-- 1º Período -->
+              <div class="col-md-6 border-end">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h6 class="display-font text-secondary mb-0">1º Período (Entrada / Saída)</h6>
+                  
+                  <div class="form-check-premium mb-0">
+                    <input type="checkbox" name="folga_periodo1" id="folga_periodo1" value="1" class="form-check-input-premium" <%= jornada.folga_periodo1 ? 'checked' : '' %> onchange="toggleInputs()">
+                    <label for="folga_periodo1" class="form-label-premium mb-0 fw-bold cursor-pointer text-success">Folga</label>
+                  </div>
+                </div>
+
+                <div class="row g-2">
+                  <div class="col-6">
+                    <label for="entrada1" class="form-label-premium">1ª Entrada</label>
+                    <input type="time" name="entrada1" id="entrada1" class="form-control-premium clock-input" value="<%= jornada.entrada1 || '' %>">
+                  </div>
+                  <div class="col-6">
+                    <label for="saida1" class="form-label-premium">1ª Saída</label>
+                    <input type="time" name="saida1" id="saida1" class="form-control-premium clock-input" value="<%= jornada.saida1 || '' %>">
+                  </div>
+                </div>
+              </div>
+
+              <!-- 2º Período -->
+              <div class="col-md-6 ps-md-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h6 class="display-font text-secondary mb-0">2º Período (Entrada / Saída)</h6>
+                  
+                  <div class="form-check-premium mb-0">
+                    <input type="checkbox" name="folga_periodo2" id="folga_periodo2" value="1" class="form-check-input-premium" <%= jornada.folga_periodo2 ? 'checked' : '' %> onchange="toggleInputs()">
+                    <label for="folga_periodo2" class="form-label-premium mb-0 fw-bold cursor-pointer text-success">Folga</label>
+                  </div>
+                </div>
+
+                <div class="row g-2">
+                  <div class="col-6">
+                    <label for="entrada2" class="form-label-premium">2ª Entrada</label>
+                    <input type="time" name="entrada2" id="entrada2" class="form-control-premium clock-input" value="<%= jornada.entrada2 || '' %>">
+                  </div>
+                  <div class="col-6">
+                    <label for="saida2" class="form-label-premium">2ª Saída</label>
+                    <input type="time" name="saida2" id="saida2" class="form-control-premium clock-input" value="<%= jornada.saida2 || '' %>">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Observações -->
+            <div class="form-group-premium mt-4">
+              <label for="observacao" class="form-label-premium">Observação / Justificativa</label>
+              <textarea name="observacao" id="observacao" rows="3" class="form-control-premium" placeholder="Ex: Viagem intermunicipal, atestado médico, atraso justificado, etc."><%= jornada.observacao || '' %></textarea>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 mt-4 border-top pt-3">
+              <button type="submit" class="btn-grad py-2 px-4">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Gravar Lançamento
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    <% } else { %>
+      <div class="alert alert-info text-center py-4 rounded-3" style="background-color: #e0f2fe; color: #0369a1; border: 1px dashed #7dd3fc;">
+        <i class="fa-solid fa-hand-pointer fs-3 mb-2"></i>
+        <p class="m-0 fw-semibold">Por favor, selecione o Funcionário e a Data acima para abrir os campos de registro.</p>
+      </div>
+    <% } %>
+
+  </div>
+</div>
+
+<script>
+  function carregarRegistro() {
+    const fId = document.getElementById('search_funcionario_id').value;
+    const data = document.getElementById('search_data').value;
+    if (fId) {
+      window.location.href = `/jornada/cadastro?funcionario_id=${fId}&data=${data}`;
+    }
+  }
+
+  function toggleInputs() {
+    const folga1 = document.getElementById('folga_periodo1')?.checked;
+    const folga2 = document.getElementById('folga_periodo2')?.checked;
+
+    const ent1 = document.getElementById('entrada1');
+    const sai1 = document.getElementById('saida1');
+    const ent2 = document.getElementById('entrada2');
+    const sai2 = document.getElementById('saida2');
+
+    if (folga1) {
+      if(ent1) { ent1.disabled = true; ent1.value = ''; }
+      if(sai1) { sai1.disabled = true; sai1.value = ''; }
+    } else {
+      if(ent1) ent1.disabled = false;
+      if(sai1) sai1.disabled = false;
+    }
+
+    if (folga2) {
+      if(ent2) { ent2.disabled = true; ent2.value = ''; }
+      if(sai2) { sai2.disabled = true; sai2.value = ''; }
+    } else {
+      if(ent2) ent2.disabled = false;
+      if(sai2) sai2.disabled = false;
+    }
+  }
+
+  // Chamar ao carregar para desabilitar o que for necessário
+  window.onload = function() {
+    toggleInputs();
+  };
+</script>

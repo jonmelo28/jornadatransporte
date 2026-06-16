@@ -1,0 +1,100 @@
+<div class="page-header">
+  <div class="page-title-section">
+    <h1 class="display-font"><%= title %></h1>
+    <span class="page-subtitle">Configure os horários de entrada e saída para este turno.</span>
+  </div>
+  <div>
+    <a href="/horarios-padrao" class="btn btn-outline-secondary rounded-3">
+      <i class="fa-solid fa-arrow-left me-1"></i> Voltar
+    </a>
+  </div>
+</div>
+
+<% if (typeof error !== 'undefined' && error) { %>
+  <div class="alert alert-danger d-flex align-items-center py-2 px-3 border-0 rounded-3 mb-4"
+       style="background-color: var(--danger-bg); color: var(--danger);" role="alert">
+    <i class="fa-solid fa-circle-exclamation me-2"></i>
+    <div style="font-size: 0.875rem;"><%= error %></div>
+  </div>
+<% } %>
+
+<div class="row g-4">
+  <div class="col-12 col-xl-8">
+    <div class="card-premium">
+      <div class="card-premium-header">
+        <h5 class="m-0 display-font">Dados do Turno</h5>
+      </div>
+      <div class="card-premium-body">
+        <form action="<%= action %>" method="POST">
+          <div class="row g-4">
+            
+            <div class="col-md-12">
+              <label for="nome" class="form-label text-muted fw-semibold mb-1" style="font-size: 0.85rem;">Nome do Turno *</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0 text-muted">
+                  <i class="fa-solid fa-tag"></i>
+                </span>
+                <input type="text" class="form-control border-start-0 ps-0" id="nome" name="nome"
+                       placeholder="Ex: Turno Comercial 08h-18h"
+                       value="<%= schedule.nome || '' %>" required>
+              </div>
+            </div>
+
+            <!-- Primeiro Período -->
+            <div class="col-12 mt-4">
+              <h6 class="text-primary fw-bold mb-3 border-bottom pb-2">Primeiro Período</h6>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="entrada1_base" class="form-label text-muted fw-semibold mb-1" style="font-size: 0.85rem;">1ª Entrada *</label>
+                  <input type="time" class="form-control" id="entrada1_base" name="entrada1_base"
+                         value="<%= schedule.entrada1_base ? schedule.entrada1_base.substring(0, 5) : '08:00' %>" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="saida1_base" class="form-label text-muted fw-semibold mb-1" style="font-size: 0.85rem;">1ª Saída *</label>
+                  <input type="time" class="form-control" id="saida1_base" name="saida1_base"
+                         value="<%= schedule.saida1_base ? schedule.saida1_base.substring(0, 5) : '12:00' %>" required>
+                </div>
+              </div>
+            </div>
+
+            <!-- Segundo Período -->
+            <div class="col-12 mt-4">
+              <h6 class="text-primary fw-bold mb-3 border-bottom pb-2">Segundo Período</h6>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="entrada2_base" class="form-label text-muted fw-semibold mb-1" style="font-size: 0.85rem;">2ª Entrada *</label>
+                  <input type="time" class="form-control" id="entrada2_base" name="entrada2_base"
+                         value="<%= schedule.entrada2_base ? schedule.entrada2_base.substring(0, 5) : '14:00' %>" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="saida2_base" class="form-label text-muted fw-semibold mb-1" style="font-size: 0.85rem;">2ª Saída *</label>
+                  <input type="time" class="form-control" id="saida2_base" name="saida2_base"
+                         value="<%= schedule.saida2_base ? schedule.saida2_base.substring(0, 5) : '18:00' %>" required>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 mt-5 text-end">
+              <button type="submit" class="btn-grad px-4">
+                <i class="fa-solid fa-save me-2"></i> Salvar Turno
+              </button>
+            </div>
+            
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-xl-4">
+    <div class="alert alert-secondary border-0 rounded-3 shadow-sm">
+      <h6 class="fw-bold mb-3 text-dark"><i class="fa-solid fa-lightbulb text-warning me-2"></i> Dica</h6>
+      <p class="mb-2 text-muted" style="font-size: 0.9rem;">
+        Os horários definidos aqui serão a <strong>base</strong> para o cálculo de horas extras e faltas dos funcionários vinculados a este turno.
+      </p>
+      <p class="mb-0 text-muted" style="font-size: 0.9rem;">
+        Certifique-se de que a soma das horas trabalhadas por dia esteja correta para evitar erros no banco de horas.
+      </p>
+    </div>
+  </div>
+</div>

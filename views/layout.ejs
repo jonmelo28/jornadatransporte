@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> | Controle de Jornada</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- CSS Customizado Premium -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Menu Lateral Sidebar -->
+    <aside class="app-sidebar">
+      <div class="sidebar-header">
+        <i class="fa-solid fa-truck-ramp-box fs-4 text-indigo-300"></i>
+        <span class="sidebar-brand">JornadaTrans</span>
+      </div>
+      
+      <ul class="sidebar-menu">
+        <% if (user && user.permissoes && user.permissoes.includes('dashboard')) { %>
+          <li>
+            <a href="/" class="menu-item-link <%= path === '/' ? 'active' : '' %>">
+              <i class="fa-solid fa-chart-pie"></i> Painel Geral
+            </a>
+          </li>
+        <% } %>
+        
+        <% if (user && user.permissoes && user.permissoes.includes('funcionarios')) { %>
+          <li>
+            <a href="/funcionarios" class="menu-item-link <%= path.startsWith('/funcionarios') ? 'active' : '' %>">
+              <i class="fa-solid fa-users"></i> Funcionários
+            </a>
+          </li>
+        <% } %>
+        
+        <% if (user && user.permissoes && user.permissoes.includes('usuarios')) { %>
+          <li>
+            <a href="/usuarios" class="menu-item-link <%= path.startsWith('/usuarios') ? 'active' : '' %>">
+              <i class="fa-solid fa-user-shield"></i> Usuários
+            </a>
+          </li>
+        <% } %>
+        
+        <% if (user && user.permissoes && user.permissoes.includes('jornada_cadastro')) { %>
+          <li>
+            <a href="/jornada/cadastro" class="menu-item-link <%= path.startsWith('/jornada') ? 'active' : '' %>">
+              <i class="fa-solid fa-clock-rotate-left"></i> Registrar Ponto
+            </a>
+          </li>
+        <% } %>
+        
+        <% if (user && user.permissoes && user.permissoes.includes('dias_uteis')) { %>
+          <li>
+            <a href="/dias-uteis" class="menu-item-link <%= path.startsWith('/dias-uteis') ? 'active' : '' %>">
+              <i class="fa-solid fa-calendar-check"></i> Dias Úteis
+            </a>
+          </li>
+        <% } %>
+        
+        <% if (user && user.permissoes && user.permissoes.includes('financeiro')) { %>
+          <li>
+            <a href="/financeiro" class="menu-item-link <%= path.startsWith('/financeiro') ? 'active' : '' %>">
+              <i class="fa-solid fa-hand-holding-dollar"></i> Financeiro / Extras
+            </a>
+          </li>
+        <% } %>
+        
+        <% if (user && user.permissoes && user.permissoes.includes('relatorios')) { %>
+          <li>
+            <a href="/relatorios" class="menu-item-link <%= path.startsWith('/relatorios') ? 'active' : '' %>">
+              <i class="fa-solid fa-file-invoice-dollar"></i> Folhas de Ponto
+            </a>
+          </li>
+        <% } %>
+        
+        <% if (user && user.permissoes && user.permissoes.includes('configuracao')) { %>
+          <li>
+            <a href="/configuracao" class="menu-item-link <%= path.startsWith('/configuracao') ? 'active' : '' %>">
+              <i class="fa-solid fa-sliders"></i> Regras de Horário
+            </a>
+          </li>
+        <% } %>
+
+        <li class="mt-auto border-top pt-2" style="border-color: rgba(255,255,255,0.05) !important;">
+          <a href="/meu-perfil" class="menu-item-link <%= path === '/meu-perfil' ? 'active' : '' %>">
+            <i class="fa-solid fa-user-gear"></i> Meu Perfil
+          </a>
+        </li>
+      </ul>
+      
+      <!-- Rodapé da Sidebar (Usuário Logado) -->
+      <div class="sidebar-footer">
+        <% if (user) { %>
+          <div class="user-profile-widget">
+            <div class="user-avatar">
+              <%= user.nome.charAt(0).toUpperCase() %>
+            </div>
+            <div class="user-info">
+              <span class="user-name" title="<%= user.nome %>"><%= user.nome %></span>
+              <span class="user-role"><%= user.email %></span>
+            </div>
+          </div>
+          <a href="/logout" class="btn-logout-sidebar">
+            <i class="fa-solid fa-right-from-bracket"></i> Sair do Sistema
+          </a>
+        <% } %>
+      </div>
+    </aside>
+
+    <!-- Conteúdo Principal Dinâmico -->
+    <main class="app-content">
+      <%- body %>
+    </main>
+  </div>
+
+  <!-- Bootstrap 5 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

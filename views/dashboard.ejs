@@ -1,0 +1,106 @@
+<div class="page-header">
+  <div class="page-title-section">
+    <h1 class="display-font">Painel de Saldos</h1>
+    <span class="page-subtitle">Visão geral dos saldos de horas acumulados no mês selecionado.</span>
+  </div>
+  
+  <!-- Filtro de Competência (Mês/Ano) -->
+  <div>
+    <form method="GET" action="/" class="d-flex align-items-center gap-2">
+      <label for="mes" class="form-label-premium mb-0 text-nowrap d-none d-sm-inline">Filtrar Competência:</label>
+      <input type="month" name="mes" id="mes" class="form-control-premium" value="<%= selectedMonth %>" style="max-width: 170px;">
+      <button type="submit" class="btn-grad py-2 px-3">
+        <i class="fa-solid fa-filter"></i> Filtrar
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Grid de Ajudantes vs Motoristas -->
+<div class="row g-4">
+  <!-- Coluna da Esquerda: Ajudantes -->
+  <div class="col-lg-6">
+    <div class="card-premium">
+      <div class="card-premium-header" style="border-left: 4px solid #0284c7;">
+        <h5 class="m-0 display-font text-info">
+          <i class="fa-solid fa-hands-helping me-2"></i>Ajudantes
+        </h5>
+        <span class="badge bg-secondary rounded-pill"><%= ajudantes.length %> cadastrados</span>
+      </div>
+      <div class="card-premium-body p-0">
+        <% if (ajudantes.length === 0) { %>
+          <div class="p-4 text-center text-muted">
+            <i class="fa-regular fa-folder-open fs-2 mb-2"></i>
+            <p class="m-0">Nenhum ajudante cadastrado.</p>
+          </div>
+        <% } else { %>
+          <table class="table-premium">
+            <thead>
+              <tr>
+                <th>Nome do Ajudante</th>
+                <th class="text-end" style="width: 150px;">Saldo de Horas</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% ajudantes.forEach(aj => { %>
+                <tr>
+                  <td>
+                    <div class="fw-semibold text-dark"><%= aj.nome %></div>
+                  </td>
+                  <td class="text-end font-monospace fw-bold fs-6">
+                    <span class="<%= aj.saldoMins >= 0 ? 'text-success' : 'text-danger' %>">
+                      <%= aj.saldoHoras %>
+                    </span>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Coluna da Direita: Motoristas -->
+  <div class="col-lg-6">
+    <div class="card-premium">
+      <div class="card-premium-header" style="border-left: 4px solid #4f46e5;">
+        <h5 class="m-0 display-font" style="color: var(--primary);">
+          <i class="fa-solid fa-truck-steering me-2"></i>Motoristas
+        </h5>
+        <span class="badge bg-secondary rounded-pill"><%= motoristas.length %> cadastrados</span>
+      </div>
+      <div class="card-premium-body p-0">
+        <% if (motoristas.length === 0) { %>
+          <div class="p-4 text-center text-muted">
+            <i class="fa-regular fa-folder-open fs-2 mb-2"></i>
+            <p class="m-0">Nenhum motorista cadastrado.</p>
+          </div>
+        <% } else { %>
+          <table class="table-premium">
+            <thead>
+              <tr>
+                <th>Nome do Motorista</th>
+                <th class="text-end" style="width: 150px;">Saldo de Horas</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% motoristas.forEach(mot => { %>
+                <tr>
+                  <td>
+                    <div class="fw-semibold text-dark"><%= mot.nome %></div>
+                  </td>
+                  <td class="text-end font-monospace fw-bold fs-6">
+                    <span class="<%= mot.saldoMins >= 0 ? 'text-success' : 'text-danger' %>">
+                      <%= mot.saldoHoras %>
+                    </span>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>

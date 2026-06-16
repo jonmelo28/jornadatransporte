@@ -1,0 +1,158 @@
+<div class="page-header">
+  <div class="page-title-section">
+    <h1 class="display-font">Demonstrativo Financeiro e Pagamentos</h1>
+    <span class="page-subtitle">Acompanhe as horas extras acumuladas em valores monetários, DSR e controle de pagamento.</span>
+  </div>
+  
+  <!-- Filtro de Competência -->
+  <div>
+    <form method="GET" action="/financeiro" class="d-flex align-items-center gap-2">
+      <label for="mes" class="form-label-premium mb-0 text-nowrap d-none d-sm-inline">Competência:</label>
+      <input type="month" name="mes" id="mes" class="form-control-premium" value="<%= selectedMonth %>" style="max-width: 170px;">
+      <button type="submit" class="btn-grad py-2 px-3">
+        <i class="fa-solid fa-filter"></i> Filtrar
+      </button>
+    </form>
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Formulário para Lançamento de Pagamento (Esquerda / Superior no Mobile) -->
+  <div class="col-xl-3">
+    <div class="card-premium">
+      <div class="card-premium-header">
+        <h5 class="m-0 display-font"><i class="fa-solid fa-file-invoice-dollar me-2"></i>Registrar Pagamento</h5>
+      </div>
+      <div class="card-premium-body">
+        <form action="/financeiro/pagamento" method="POST">
+          <div class="form-group-premium">
+            <label for="funcionario_id" class="form-label-premium">Funcionário</label>
+            <select name="funcionario_id" id="funcionario_id" class="form-control-premium" required>
+              <option value="" disabled selected>Escolha...</option>
+              <% employees.forEach(emp => { %>
+                <option value="<%= emp.id %>"><%= emp.nome %> (<%= emp.cargo === 'motorista' ? 'Motorista' : 'Ajudante' %>)</option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group-premium">
+            <label for="ano_mes" class="form-label-premium">Mês de Competência</label>
+            <input type="month" name="ano_mes" id="ano_mes" class="form-control-premium" value="<%= selectedMonth %>" required>
+          </div>
+
+          <div class="form-group-premium">
+            <label for="valor_pago" class="form-label-premium">Valor Pago Adiantado (R$)</label>
+            <input type="number" name="valor_pago" id="valor_pago" class="form-control-premium" placeholder="Ex: 150.00" step="0.01" min="0" required>
+          </div>
+
+          <button type="submit" class="btn-grad w-100 py-2.5 mt-3 justify-content-center">
+            <i class="fa-solid fa-receipt"></i> Gravar Pagamento
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabelas Financeiras (Direita) -->
+  <div class="col-xl-9">
+    <!-- Tabela 1: Motoristas -->
+    <div class="card-premium mb-4">
+      <div class="card-premium-header" style="border-left: 4px solid #4f46e5;">
+        <h5 class="m-0 display-font text-indigo-700"><i class="fa-solid fa-truck-steering me-2"></i>Motoristas</h5>
+        <span class="badge bg-indigo-100 text-indigo-800" style="background-color: #e0e7ff; color: #3730a3;">Extras + DSR</span>
+      </div>
+      <div class="card-premium-body p-0">
+        <% if (motoristas.length === 0) { %>
+          <div class="p-4 text-center text-muted">
+            <p class="m-0">Nenhum motorista cadastrado.</p>
+          </div>
+        <% } else { %>
+          <div class="table-responsive">
+            <table class="table-premium" style="font-size: 0.825rem;">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Salário</th>
+                  <th>Val/Hora</th>
+                  <th>Hora Ext (50%)</th>
+                  <th>Hora Ext R$</th>
+                  <th>DSR</th>
+                  <th>Vl. Pago</th>
+                  <th class="text-end">Diferença</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% motoristas.forEach(mot => { %>
+                  <tr>
+                    <td><div class="fw-semibold text-dark"><%= mot.nome %></div></td>
+                    <td>R$ <%= parseFloat(mot.salario).toFixed(2) %></td>
+                    <td>R$ <%= mot.valorHora.toFixed(2) %></td>
+                    <td>R$ <%= mot.valorHoraExtra.toFixed(2) %></td>
+                    <td class="text-success fw-semibold">R$ <%= mot.horasExtraRS.toFixed(2) %></td>
+                    <td class="text-success">R$ <%= mot.dsr.toFixed(2) %></td>
+                    <td class="text-muted">R$ <%= mot.valorPago.toFixed(2) %></td>
+                    <td class="text-end fw-bold">
+                      <span class="<%= mot.diferenca >= 0 ? 'text-success' : 'text-danger' %>">
+                        R$ <%= mot.diferenca.toFixed(2) %>
+                      </span>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Tabela 2: Ajudantes -->
+    <div class="card-premium">
+      <div class="card-premium-header" style="border-left: 4px solid #0284c7;">
+        <h5 class="m-0 display-font text-info"><i class="fa-solid fa-hands-helping me-2"></i>Ajudantes</h5>
+        <span class="badge bg-sky-100 text-sky-800" style="background-color: #e0f2fe; color: #0369a1;">Extras + DSR</span>
+      </div>
+      <div class="card-premium-body p-0">
+        <% if (ajudantes.length === 0) { %>
+          <div class="p-4 text-center text-muted">
+            <p class="m-0">Nenhum ajudante cadastrado.</p>
+          </div>
+        <% } else { %>
+          <div class="table-responsive">
+            <table class="table-premium" style="font-size: 0.825rem;">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Salário</th>
+                  <th>Val/Hora</th>
+                  <th>Hora Ext (50%)</th>
+                  <th>Hora Ext R$</th>
+                  <th>DSR</th>
+                  <th>Vl. Pago</th>
+                  <th class="text-end">Diferença</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% ajudantes.forEach(aj => { %>
+                  <tr>
+                    <td><div class="fw-semibold text-dark"><%= aj.nome %></div></td>
+                    <td>R$ <%= parseFloat(aj.salario).toFixed(2) %></td>
+                    <td>R$ <%= aj.valorHora.toFixed(2) %></td>
+                    <td>R$ <%= aj.valorHoraExtra.toFixed(2) %></td>
+                    <td class="text-success fw-semibold">R$ <%= aj.horasExtraRS.toFixed(2) %></td>
+                    <td class="text-success">R$ <%= aj.dsr.toFixed(2) %></td>
+                    <td class="text-muted">R$ <%= aj.valorPago.toFixed(2) %></td>
+                    <td class="text-end fw-bold">
+                      <span class="<%= aj.diferenca >= 0 ? 'text-success' : 'text-danger' %>">
+                        R$ <%= aj.diferenca.toFixed(2) %>
+                      </span>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
